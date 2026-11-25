@@ -1,5 +1,5 @@
 {
-  "version": "2.3.0",
-  "notes": "1. 移除外挂式掉落率调节与测试掉盒，礼盒掉落率固定锁定为 1%；2. 收紧 8 色礼盒品质与越级概率，长线游玩更耐玩；3. 锻造重大升级：物品强化至 +8 时直接品质飞升，随机变为高 1 级品质物品！",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.3.0/TheLuckyRaven_Update.zip"
+  "version": "2.4.0",
+  "notes": "1. 进一步下调黑/粉礼盒与高阶物品爆率；2. 锻造每件物品最多用 3 次龙鳞保护（开启宸套共 4 次），新增 +3 变 2 星 / +6 变 3 星 / +8 升阶；3. 金色及以上 3 件相同物品可直接合成该物品 2 星；4. 开箱标明套装归属，金色及以上售卖新增二次防误卖确认！",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.4.0/TheLuckyRaven_Update.zip"
 }
