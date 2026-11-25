@@ -1,5 +1,5 @@
 {
-  "version": "2.7.0",
-  "notes": "1. 公开试水合规版：全面优化全图鉴 125 件物品命名，杜绝第三方商标风险（完美兼容旧存档）；2. 全新「渡鸦世界传奇NPC图鉴」上线，老冰、阿皓、阿宸三大Q版形象正式入驻收藏室套装图谱；3. 设置与安装向导新增醒目隐私安全承诺：仅统计交互次数，绝不记录具体按键内容！",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.0/TheLuckyRaven_Update.zip"
+  "version": "2.7.1",
+  "notes": "1. 安全防护升级：主程序正式接入代码混淆与字符串加密保护，防反编译与二次篡改（100% 兼容原有存档）；2. 新增正式《All Rights Reserved》版权声明与官方防倒卖防骗提示；3. 公开官网同步升级防整包扒图保护与传奇NPC原画署名水印。",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.1/TheLuckyRaven_Update.zip"
 }
