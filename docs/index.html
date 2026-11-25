@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>幸运渡鸦 · The Lucky Raven — 超轻量桌面挂机收集游戏</title>
+  <meta name="description" content="《幸运渡鸦》是一款常驻内存仅约 2.6MB 的 Windows 桌面挂机收集游戏。敲键盘点鼠标随机掉落 8 阶礼盒，收集 125 件手绘像素珍品与传奇 NPC 套装！仅统计交互次数，绝不记录具体按键内容。" />
+  <link rel="icon" type="image/png" href="assets/raven.png" />
+  <style>
+    :root {
+      --bg-canvas: #F6F1E5;
+      --bg-sub: #ECE4D2;
+      --bg-card: #FFFDF7;
+      --wood: #5C4636;
+      --soft-border: #D4C5AA;
+      --shadow: rgba(92, 70, 54, 0.14);
+      --ink: #3B2D23;
+      --ink-sub: #7A6754;
+      --leaf: #569F71;
+      --leaf-dark: #3B7F55;
+      --gold: #E4A22E;
+      --gold-bg: #FDF2D0;
+      --coral: #D96055;
+      --raven: #33415C;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Microsoft YaHei UI", "PingFang SC", "Hiragino Sans GB", -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-canvas);
+      background-image:
+        radial-gradient(circle at 12% 10%, rgba(244, 198, 92, 0.16), transparent 34%),
+        radial-gradient(circle at 88% 18%, rgba(94, 168, 122, 0.12), transparent 36%),
+        radial-gradient(rgba(156, 134, 108, 0.14) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 24px 24px;
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* 顶部导航栏 */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 253, 247, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--soft-border);
+    }
+    .nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 12px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.3px;
+    }
+    .brand img {
+      width: 34px;
+      height: 34px;
+      image-rendering: pixelated;
+    }
+    .ver-pill {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--gold-bg);
+      color: #8F520B;
+      border: 1.5px solid var(--gold);
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-sub);
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 14px;
+      border: 2px solid var(--wood);
+      background: var(--bg-card);
+      color: var(--ink);
+      box-shadow: 0 4px 0 rgba(92, 70, 54, 0.22);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(92, 70, 54, 0.22); }
+    .btn-primary {
+      background: var(--leaf);
+      border-color: var(--leaf-dark);
+      color: #fff;
+      box-shadow: 0 4px 0 var(--leaf-dark);
+    }
+    .btn-primary:hover { background: #4B9466; }
+    .btn-gold {
+      background: linear-gradient(180deg, #FFE8A3, #F5C754);
+      border-color: #B97A12;
+      color: #5C3604;
+      box-shadow: 0 4px 0 #B97A12;
+    }
+    .btn-sm { padding: 8px 14px; font-size: 13px; border-radius: 12px; }
+
+    /* 主容器 */
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+    section { padding: 64px 0; }
+    .section-head {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 40px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: var(--gold-bg);
+      color: #8E5109;
+      border: 1.5px solid #E8B654;
+      margin-bottom: 12px;
+    }
+    .section-head h2 {
+      font-size: clamp(26px, 3.2vw, 34px);
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+    .section-head p {
+      font-size: 15px;
+      color: var(--ink-sub);
+    }
+
+    /* 首屏 Hero */
+    .hero {
+      padding: 52px 0 44px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 36px;
+      align-items: center;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 4.4vw, 48px);
+      line-height: 1.18;
+      font-weight: 900;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    .hero h1 .hl {
+      color: #C77710;
+      background: linear-gradient(transparent 62%, rgba(244, 198, 78, 0.45) 62%);
+      padding: 0 4px;
+    }
+    .hero-desc {
+      font-size: 16px;
+      color: var(--ink-sub);
+      margin-bottom: 24px;
+      max-width: 560px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .trust-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 560px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      background: rgba(255, 253, 247, 0.85);
+      border: 1.5px solid var(--soft-border);
+      padding: 8px 12px;
+      border-radius: 12px;
+    }
+    .trust-item .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--leaf);
+      flex-shrink: 0;
+    }
+
+    /* 交互式试拆礼盒演示台 */
+    .demo-card {
+      background: var(--bg-card);
+      border: 2.5px solid var(--wood);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 8px 0 rgba(92, 70, 54, 0.16), 0 18px 36px rgba(92, 70, 54, 0.08);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .demo-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink-sub);
+    }
+    .demo-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-sub);
+      border: 1.5px solid var(--soft-border);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      user-select: none;
+    }
+    .demo-toggle.active {
+      background: var(--gold-bg);
+      border-color: var(--gold);
+      color: #8E5109;
+    }
+    .box-stage {
+      min-height: 238px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 12px;
+      border-radius: 16px;
+      background: radial-gradient(circle at 50% 45%, #FFF8E6, #F4ECDC);
+      border: 2px dashed var(--soft-border);
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .gift-btn {
+      width: 118px;
+      height: 118px;
+      border-radius: 24px;
+      border: 3px solid var(--wood);
+      background: linear-gradient(145deg, #FFE18C, #E8A236);
+      box-shadow: 0 8px 0 rgba(92, 70, 54, 0.2), 0 0 28px rgba(242, 174, 54, 0.45);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: transform 0.16s ease;
+      animation: floaty 2.8s ease-in-out infinite;
+    }
+    .gift-btn:hover { transform: scale(1.06); }
+    .gift-btn.shaking { animation: shake 0.36s ease-in-out; }
+    .gift-icon-svg { width: 64px; height: 64px; }
+    .gift-hint { font-size: 12px; font-weight: 800; color: #5C3604; }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(-10deg) scale(1.06); }
+      40% { transform: rotate(10deg) scale(1.08); }
+      60% { transform: rotate(-8deg) scale(1.06); }
+      80% { transform: rotate(8deg) scale(1.04); }
+    }
+    .reveal-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      animation: popIn 0.25s ease-out;
+    }
+    .reveal-box.show { display: flex; }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.84); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .sprite-icon {
+      width: 64px;
+      height: 64px;
+      background-image: url("assets/items_sprite.png");
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .reveal-icon-wrap {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 6px 0 8px;
+      border: 2px dashed rgba(92, 70, 54, 0.35);
+    }
+    .reveal-icon-wrap .sprite-icon { transform: scale(1.22); }
+    .rarity-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-bottom: 4px;
+    }
+    .reveal-name { font-size: 19px; font-weight: 900; margin-bottom: 2px; }
+    .reveal-sub { font-size: 12px; font-weight: 700; color: var(--ink-sub); margin-bottom: 4px; }
+    .reveal-flav { font-size: 12.5px; color: var(--ink-sub); max-width: 310px; }
+    .reveal-set-tag {
+      margin-top: 6px;
+      font-size: 11.5px;
+      font-weight: 800;
+      background: #F2E8FF;
+      color: #5C2A9C;
+      border: 1px solid #9A63D8;
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+    .demo-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--ink-sub);
+    }
+
+    /* 玩法亮点网格 */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .feat-card {
+      background: var(--bg-card);
+      border: 2px solid var(--soft-border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: 0 4px 0 rgba(92, 70, 54, 0.1);
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .feat-card:hover { transform: translateY(-3px); border-color: var(--wood); }
+    .feat-ico {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      background: var(--gold-bg);
+      border: 1.5px solid #E5B95C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .feat-card h3 { font-size: 17px; font-weight: 900; margin-bottom: 8px; }
+    .feat-card p { font-size: 13.8px; color: var(--ink-sub); }
+
+    /* 传奇 NPC 图鉴展区 */
+    .npc-section {
+      background: linear-gradient(180deg, rgba(255, 251, 238, 0.8), rgba(246, 241, 229, 0.9));
+      border-top: 2px solid var(--soft-border);
+      border-bottom: 2px solid var(--soft-border);
+    }
+    .npc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .npc-card {
+      background: var(--bg-card);
+      border: 2.5px solid var(--wood);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 7px 0 rgba(92, 70, 54, 0.14);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.18s ease;
+    }
+    .npc-card:hover { transform: translateY(-4px); }
+    .npc-portrait-box {
+      background: #FAF5E8;
+      padding: 18px 18px 8px;
+      position: relative;
+      text-align: center;
+    }
+    .npc-portrait-box img {
+      width: 100%;
+      max-width: 268px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 2.5px solid rgba(92, 70, 54, 0.18);
+      display: block;
+      margin: 0 auto;
+    }
+    .npc-role-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 999px;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.16);
+    }
+    .npc-body {
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .npc-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .npc-title-row h3 { font-size: 22px; font-weight: 900; }
+    .npc-alias { font-size: 12.5px; font-weight: 800; color: var(--ink-sub); }
+    .npc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .npc-tag {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--bg-sub);
+      color: var(--ink);
+    }
+    .npc-lore {
+      font-size: 13.5px;
+      color: var(--ink-sub);
+      margin-bottom: 14px;
+    }
+    .npc-set-box {
+      margin-top: auto;
+      background: #FAF5E8;
+      border: 1.5px solid var(--soft-border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .npc-set-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .npc-set-bonus {
+      font-size: 12.2px;
+      color: var(--leaf-dark);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .npc-set-bonus + .npc-set-title {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--soft-border);
+    }
+    .mini-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .mini-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px 2px 4px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--soft-border);
+    }
+    .mini-chip .mini-spr {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      overflow: hidden;
+      position: relative;
+    }
+    .mini-chip .mini-spr .sprite-icon {
+      transform: scale(0.3125);
+      transform-origin: top left;
+    }
+
+    /* 特殊殿堂双套装横幅 */
+    .special-sets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .special-set-card {
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      border: 2px solid;
+      box-shadow: 0 5px 0 rgba(92, 70, 54, 0.12);
+    }
+    .special-cabbage {
+      background: linear-gradient(135deg, #EDF9EE, #FFFDF7);
+      border-color: #54A26C;
+    }
+    .special-gold {
+      background: linear-gradient(135deg, #FFF5CF, #FFFDF5);
+      border-color: #E2A224;
+    }
+    .special-set-card h3 { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+    .special-set-card p { font-size: 13.5px; color: var(--ink-sub); margin-bottom: 10px; }
+
+    /* 125 件图鉴浏览器 */
+    .codex-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .pill-btn {
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1.5px solid var(--soft-border);
+      background: var(--bg-card);
+      color: var(--ink-sub);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .pill-btn:hover { border-color: var(--wood); color: var(--ink); }
+    .pill-btn.active {
+      background: var(--raven);
+      border-color: var(--raven);
+      color: #fff;
+    }
+    .search-input {
+      font-family: inherit;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 2px solid var(--soft-border);
+      background: var(--bg-card);
+      color: var(--ink);
+      font-size: 13.5px;
+      min-width: 220px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--wood); }
+    .codex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+      gap: 12px;
+    }
+    .item-card {
+      border-radius: 14px;
+      padding: 12px 10px 14px;
+      border: 2px solid var(--soft-border);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 3px 0 rgba(92, 70, 54, 0.1);
+      transition: transform 0.14s ease;
+    }
+    .item-card:hover { transform: translateY(-2px); }
+    .item-card .top-meta {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .item-card .it-name {
+      font-size: 13.5px;
+      font-weight: 900;
+      margin: 6px 0 2px;
+      line-height: 1.3;
+    }
+    .item-card .it-sub {
+      font-size: 11.5px;
+      opacity: 0.78;
+      margin-bottom: 4px;
+    }
+    .item-card .it-flav {
+      font-size: 11.2px;
+      opacity: 0.76;
+      line-height: 1.45;
+      margin-top: auto;
+    }
+    .codex-more-wrap { text-align: center; margin-top: 22px; }
+
+    /* 隐私安全透明声明卡片 */
+    .privacy-banner {
+      background: linear-gradient(135deg, #EBF8EE, #F7FCF8);
+      border: 2.5px solid var(--leaf);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 7px 0 rgba(59, 127, 85, 0.18);
+    }
+    .privacy-pledge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--leaf-dark);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 14px;
+      font-size: clamp(15px, 2vw, 19px);
+      font-weight: 900;
+      margin-bottom: 22px;
+    }
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .privacy-card {
+      background: #fff;
+      border: 1.5px solid #BFE0C8;
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .privacy-card h4 {
+      font-size: 15.5px;
+      font-weight: 900;
+      color: #26603C;
+      margin-bottom: 6px;
+    }
+    .privacy-card p { font-size: 13.5px; color: #4A5D50; }
+
+    /* 下载与页脚 */
+    .download-box {
+      background: var(--bg-card);
+      border: 2.5px solid var(--wood);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 8px 0 rgba(92, 70, 54, 0.15);
+    }
+    .download-box h2 { font-size: 28px; font-weight: 900; margin-bottom: 10px; }
+    .download-box p { color: var(--ink-sub); margin-bottom: 22px; font-size: 15px; }
+    .dl-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 16px; }
+    .dl-note { font-size: 12.5px; color: var(--ink-sub); }
+
+    footer {
+      border-top: 2px solid var(--soft-border);
+      padding: 28px 0 42px;
+      text-align: center;
+      color: var(--ink-sub);
+      font-size: 13px;
+    }
+    footer a { text-decoration: underline; }
+
+    @media (max-width: 920px) {
+      .hero-grid, .features-grid, .npc-grid, .special-sets-grid, .privacy-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="#top" class="brand">
+        <img src="assets/raven.png" alt="幸运渡鸦图标" />
+        <span>幸运渡鸦</span>
+        <span class="ver-pill">v2.7.0 公开试水版</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">核心玩法</a>
+        <a href="#npcs">传奇NPC图鉴</a>
+        <a href="#codex">125件全图鉴</a>
+        <a href="#privacy">隐私与安全</a>
+      </nav>
+      <a href="#download" class="btn btn-primary btn-sm">免费下载 Win 版</a>
+    </div>
+  </header>
+
+  <!-- 首屏 Hero + 在线试拆礼盒 -->
+  <section id="top" class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">✦ Windows 极简后台挂机收集 · 0广告 0氪金</div>
+        <h1>平时敲键盘点鼠标，<br><span class="hl">渡鸦悄悄衔来彩色礼盒</span></h1>
+        <p class="hero-desc">
+          《幸运渡鸦 · The Lucky Raven》是一款专为上班、学习、摸鱼与打游戏打造的超轻量桌面伴侣收集游戏。静默驻留任务栏托盘，常驻内存仅约 <strong>2.6MB</strong>，每一次打字与点击都有机会掉落 8 阶神秘礼盒，收集 125 件手绘像素珍宝、锻造升阶、点亮传奇 NPC 专属套装！
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.0/TheLuckyRaven_Setup.exe">
+            ⬇ 下载一键安装版（国内加速）
+          </a>
+          <a class="btn btn-gold" href="https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.0/TheLuckyRaven_Update.zip">
+            📦 绿色便携版 ZIP
+          </a>
+          <a class="btn" href="https://github.com/rui36122-sketch/TheLuckyRaven/releases/latest" target="_blank" rel="noopener">
+            GitHub 官方源
+          </a>
+        </div>
+        <div class="trust-strip">
+          <div class="trust-item"><span class="dot"></span>仅统计交互次数，绝不记录按键内容</div>
+          <div class="trust-item"><span class="dot"></span>后台托盘仅 ~2.6MB，完全不卡电脑</div>
+          <div class="trust-item"><span class="dot"></span>全包不到 200KB，Win10/11 免运行库</div>
+          <div class="trust-item"><span class="dot"></span>纯本地单机存档，支持一键自动更新</div>
+        </div>
+      </div>
+
+      <!-- 互动演示：在线试拆渡鸦礼盒 -->
+      <div class="demo-card">
+        <div class="demo-top">
+          <span>🎁 网页互动试玩 · 真实 8 阶掉率</span>
+          <span id="lbBoostToggle" class="demo-toggle" title="体验老冰套2.0的礼盒品质提升加持">
+            ⚡ 老冰套2.0加持：关
+          </span>
+        </div>
+        <div class="box-stage">
+          <button id="giftBtn" class="gift-btn" type="button" aria-label="点击试拆渡鸦礼盒">
+            <svg class="gift-icon-svg" viewBox="0 0 64 64" fill="none">
+              <rect x="10" y="26" width="44" height="30" rx="4" fill="#F2A638" stroke="#3B2D23" stroke-width="3.5"/>
+              <rect x="7" y="17" width="50" height="12" rx="3" fill="#DC8A1E" stroke="#3B2D23" stroke-width="3.5"/>
+              <rect x="27" y="17" width="10" height="39" fill="#FFF3CD" stroke="#3B2D23" stroke-width="2.5"/>
+              <ellipse cx="24" cy="13" rx="9" ry="6" fill="#FFF3CD" stroke="#3B2D23" stroke-width="3"/>
+              <ellipse cx="40" cy="13" rx="9" ry="6" fill="#FFF3CD" stroke="#3B2D23" stroke-width="3"/>
+              <circle cx="32" cy="15" r="4.5" fill="#FFF3CD" stroke="#3B2D23" stroke-width="3"/>
+            </svg>
+            <span class="gift-hint">点我试拆！</span>
+          </button>
+
+          <div id="revealBox" class="reveal-box">
+            <span id="revBadge" class="rarity-badge">橙色 · 传说</span>
+            <div id="revIconWrap" class="reveal-icon-wrap">
+              <span id="revSprite" class="sprite-icon"></span>
+            </div>
+            <div id="revName" class="reveal-name">渡鸦浮雕</div>
+            <div id="revSub" class="reveal-sub">「镇馆浮雕」 · 估值 8,888 仿真币</div>
+            <div id="revFlav" class="reveal-flav">樱粉辉光与曜石雕琢而成的幸运渡鸦浮雕。</div>
+            <div id="revSetTag" class="reveal-set-tag" style="display:none;"></div>
+          </div>
+        </div>
+        <div class="demo-foot">
+          <span id="demoCounter">已试拆 0 个礼盒 · 看看你的今日欧气！</span>
+          <button id="againBtn" class="btn btn-sm" type="button">再拆一个</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心玩法亮点 -->
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">🎮 轻松摸鱼 · 上头收集</div>
+        <h2>麻雀虽小，五脏俱全的桌面收集宇宙</h2>
+        <p>不抢焦点、不弹烦人弹窗，在你正常写文档、写代码、刷网页的间隙，悄无声息积攒惊喜。</p>
+      </div>
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-ico">🐦</div>
+          <h3>无打扰后台掉礼盒</h3>
+          <p>固定 1% 交互掉落概率，礼盒永久保存在队列不消失。关闭窗口即收进托盘，内存自动压缩至约 2.6MB。</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico">🎨</div>
+          <h3>8 阶品质 · 125 件像素图鉴</h3>
+          <p>涵盖白、绿、蓝、紫、橙、红、粉、黑 8 大品阶。每件物品均配有原创手绘像素图标与趣味文案，集图鉴超解压。</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico">🔨</div>
+          <h3>渡鸦锻造：升星 & +8 飞升</h3>
+          <p>强化 +3 晋升 2 星、+6 晋升 3 星、+8 直接升阶为更高一级随机藏品！商店可购「开裂的龙鳞」防碎保护。</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico">🎰</div>
+          <h3>三合一合成 & 幸运老虎机</h3>
+          <p>3 件同阶材料向上合成；金色及以上 3 件相同直接合 2 星！多余礼盒还能投入老虎机，享 99 抽神话 / 199 抽限定双保底。</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico">🏛️</div>
+          <h3>36 格收藏室 & 专属特效</h3>
+          <p>自由陈列藏品累积仿真战力，随时一键取回或直达锻造。集齐 6 大套装解锁金碧辉煌殿堂、卷心菜礼盒皮肤等全局被动！</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico">🛡️</div>
+          <h3>高阶防误卖 & 自动更新</h3>
+          <p>开箱醒目标注套装组件，金色及以上售卖二次确认防手滑；内置 GitHub + 国内镜像实时检查更新，无损保留个人存档。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 渡鸦世界的传奇 NPC 图鉴 -->
+  <section id="npcs" class="npc-section">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">🌟 渡鸦世界 · 传奇 NPC 图鉴</div>
+        <h2>邂逅渡鸦世界的三大传奇人物</h2>
+        <p>收集散落在彩色礼盒中的传奇遗物，在收藏室拼齐对应 NPC 专属套装，即可激活高额战力倍率与独一无二的全局强运被动！</p>
+      </div>
+
+      <div class="npc-grid">
+        <!-- NPC 1：老冰 -->
+        <article class="npc-card">
+          <div class="npc-portrait-box">
+            <span class="npc-role-badge" style="background:#3B86B8;">传奇机械师</span>
+            <img src="assets/npc_laobing.jpg" alt="传奇NPC 老冰 Q版形象" loading="lazy" />
+          </div>
+          <div class="npc-body">
+            <div class="npc-title-row">
+              <h3>老冰</h3>
+              <span class="npc-alias">渡鸦工坊首席机械男</span>
+            </div>
+            <div class="npc-tags">
+              <span class="npc-tag">防火外衣</span>
+              <span class="npc-tag">工装裤插扳手</span>
+              <span class="npc-tag">叼烟淡定</span>
+              <span class="npc-tag">不离水杯</span>
+            </div>
+            <p class="npc-lore">
+              标准的硬核机械男，上身常年套着带反光条的厚实防火外衣，下身多兜工装裤里总插着一把趁手的金属扳手，嘴里悠闲叼着烟、手里端着保温水杯——传说中光靠气场就能让仿真网格瞬间收敛的传奇工匠。
+            </p>
+            <div class="npc-set-box">
+              <div class="npc-set-title">✦ 老冰套 1.0（2.4× 战力）</div>
+              <div class="npc-set-bonus">老虎机音效变可爱，且保底不空（最低抽得蓝海点8）</div>
+              <div class="mini-items" data-set="laobing_1"></div>
+
+              <div class="npc-set-title">✦ 老冰套 2.0（2.33× 战力）</div>
+              <div class="npc-set-bonus">掉盒音乐更有气势，全局交互掉率飙升至 3%，且掉落礼盒品质全面提升！</div>
+              <div class="mini-items" data-set="laobing_2"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- NPC 2：阿皓 -->
+        <article class="npc-card">
+          <div class="npc-portrait-box">
+            <span class="npc-role-badge" style="background:#D95894;">派对假面达人</span>
+            <img src="assets/npc_ahao.jpg" alt="传奇NPC 阿皓 Q版形象" loading="lazy" />
+          </div>
+          <div class="npc-body">
+            <div class="npc-title-row">
+              <h3>阿皓</h3>
+              <span class="npc-alias">渡鸦广场人气社交王</span>
+            </div>
+            <div class="npc-tags">
+              <span class="npc-tag">舞会假面</span>
+              <span class="npc-tag">花纹沙滩衣</span>
+              <span class="npc-tag">粉色运动短裤</span>
+              <span class="npc-tag">热聊不断</span>
+            </div>
+            <p class="npc-lore">
+              永远站在快乐风暴中心的潇洒潮人：脸上戴着华丽的金红舞会假面，上身热带花纹沙滩衣配下身亮眼粉色运动短裤，捧着手机正与美女聊得热火朝天。他路过的礼盒，连越级出货率都会悄悄变高！
+            </p>
+            <div class="npc-set-box">
+              <div class="npc-set-title">✦ 阿皓套（2.5× 战力）</div>
+              <div class="npc-set-bonus">开箱音乐更柔和治愈，且开箱越级获得更高品质藏品的概率 +5%！</div>
+              <div class="mini-items" data-set="hao_set"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- NPC 3：阿宸 -->
+        <article class="npc-card">
+          <div class="npc-portrait-box">
+            <span class="npc-role-badge" style="background:#6F5BC2;">咖啡锻造学者</span>
+            <img src="assets/npc_achen.jpg" alt="传奇NPC 阿宸 Q版形象" loading="lazy" />
+          </div>
+          <div class="npc-body">
+            <div class="npc-title-row">
+              <h3>阿宸</h3>
+              <span class="npc-alias">渡鸦图书馆守夜人</span>
+            </div>
+            <div class="npc-tags">
+              <span class="npc-tag">蓝色类中山装</span>
+              <span class="npc-tag">睡眼惺忪</span>
+              <span class="npc-tag">手冲咖啡壶</span>
+              <span class="npc-tag">防碎护盾</span>
+            </div>
+            <p class="npc-lore">
+              一身整齐典雅的蓝色类中山装，顶着睡眼惺忪的迷糊神情，手里却稳稳提着热气腾腾的咖啡壶给自己倒咖啡续命。别看他随时像要打盹，只要坐镇收藏室，便能为你的每件锻造藏品撑起免费防碎守护！
+            </p>
+            <div class="npc-set-box">
+              <div class="npc-set-title">✦ 阿宸套（3.0× 战力）</div>
+              <div class="npc-set-bonus">每件物品锻造额外获得 1 次免费防碎保护（等价开裂的龙鳞，总保护上限升至 4 次）！</div>
+              <div class="mini-items" data-set="chen_set"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- 另外两大主题套装展示 -->
+      <div class="special-sets-grid">
+        <div class="special-set-card special-cabbage">
+          <h3>🥬 秘境奇珍 · 卷心菜套装（3.5× 最高战力）</h3>
+          <p>集齐 8 阶全套卷心菜血脉：礼盒永久变为超可爱卷心菜礼盒外观、掉落提醒变为「渡鸦叼来了一个你可能爱吃的卷心菜」，且锻造强化成功率永久 +5%！</p>
+          <div class="mini-items" data-set="cabbage_set"></div>
+        </div>
+        <div class="special-set-card special-gold">
+          <h3>👑 殿堂秘宝 · 黄金套（2.8× 战力）</h3>
+          <p>集齐 5 件纯金传世珍宝：售卖任意物品多获得 15% 仿真币，金色礼盒掉落概率翻倍提升，收藏室整屏化作流金璀璨的金碧辉煌殿堂！</p>
+          <div class="mini-items" data-set="gold_set"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 125 件全图鉴预览 -->
+  <section id="codex">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">📖 125 件手绘像素藏品</div>
+        <h2>在线浏览《幸运渡鸦》完整图鉴</h2>
+        <p>所有物品均已完成原创与谐音合规命名，下面展示的即是游戏内真实像素美术图标。</p>
+      </div>
+
+      <div class="codex-controls">
+        <div id="filterPills" class="filter-pills"></div>
+        <input id="codexSearch" class="search-input" type="search" placeholder="搜索物品名、标签或文案..." />
+      </div>
+
+      <div id="codexGrid" class="codex-grid"></div>
+      <div class="codex-more-wrap">
+        <button id="toggleMoreBtn" class="btn" type="button">展开全部图鉴</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 隐私与安全透明声明 -->
+  <section id="privacy">
+    <div class="container">
+      <div class="privacy-banner">
+        <div class="privacy-pledge">
+          🛡️ 隐私安全郑重承诺：仅统计交互次数，绝不记录具体按键内容
+        </div>
+        <div class="privacy-grid">
+          <div class="privacy-card">
+            <h4>1. 绝不记录按键内容与屏幕隐私</h4>
+            <p>
+              本程序在后台监听键盘与鼠标活动，<strong>仅用于做「+1 交互计数」以判定是否触发礼盒掉落</strong>。程序绝不读取、记录、保存或识别你按下的具体字母、密码、聊天文本、剪贴板或任何窗口内容。
+            </p>
+          </div>
+          <div class="privacy-card">
+            <h4>2. 纯本地单机运行，零后台上传</h4>
+            <p>
+              游戏数据与个人进度 100% 保存在你本机目录的 <code>save\userdata.json</code> 中，无任何后台数据采集、埋点或联网上传行为；仅在你手动点击「检查更新」时才会访问 GitHub 获取公开版本号。
+            </p>
+          </div>
+          <div class="privacy-card">
+            <h4>3. 关于 Windows / 杀毒软件提示的说明</h4>
+            <p>
+              由于个人独立开发者暂未购买昂贵的商业代码签名证书，且程序包含全局交互次数统计逻辑，Windows SmartScreen 或部分杀软首次运行时可能弹出「未知发布者」提示。点击「更多信息 → 仍要运行」或添加信任即可放心游玩。
+            </p>
+          </div>
+          <div class="privacy-card">
+            <h4>4. 绿色轻量，随时一键彻底卸载</h4>
+            <p>
+              无需安装任何第三方运行库，不写系统盘垃圾文件。安装目录自带 <code>卸载幸运渡鸦.bat</code>，一键关闭进程、移除开机自启与桌面快捷方式，删除文件夹即不留任何痕迹。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部下载号召 -->
+  <section id="download" style="padding-top: 24px;">
+    <div class="container">
+      <div class="download-box">
+        <div class="eyebrow">🚀 立即开始你的桌面寻宝之旅</div>
+        <h2>免费下载《幸运渡鸦》v2.7.0 公开试水版</h2>
+        <p>支持 Windows 10 / Windows 11（64位），不到 200KB，双击 1 秒即可开启摸鱼掉盒快乐！</p>
+        <div class="dl-btns">
+          <a class="btn btn-primary" href="https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.0/TheLuckyRaven_Setup.exe">
+            ⬇ 一键安装程序 (.exe · 国内加速)
+          </a>
+          <a class="btn btn-gold" href="https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.0/TheLuckyRaven_Update.zip">
+            📦 绿色便携版 (.zip · 国内加速)
+          </a>
+          <a class="btn" href="https://github.com/rui36122-sketch/TheLuckyRaven/releases/latest" target="_blank" rel="noopener">
+            GitHub Releases 官方下载页
+          </a>
+        </div>
+        <div class="dl-note">
+          旧版本老玩家可直接在游戏内点击「设置 → 检查更新」一键无损升级至 v2.7.0（100% 保留原有存档与收藏进度）。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p><strong>幸运渡鸦 · The Lucky Raven</strong> &nbsp;|&nbsp; 公开试水版 v2.7.0 &nbsp;|&nbsp;
+        <a href="https://github.com/rui36122-sketch/TheLuckyRaven" target="_blank" rel="noopener">GitHub 项目仓库</a> &nbsp;|&nbsp;
+        <a href="https://github.com/rui36122-sketch/TheLuckyRaven/issues" target="_blank" rel="noopener">问题反馈与新物品投稿</a>
+      </p>
+      <p style="margin-top:6px;">隐私声明：本软件仅统计键鼠交互次数，绝不记录具体按键内容。游戏内所有角色、NPC与物品均为架空趣味创作。</p>
+    </div>
+  </footer>
+
+  <script>
+    const RARITIES = {
+      White:  { name: "白色·一般", weight: 48.5, bg: "#FAF8F3", bd: "#A49A8D", tagBg: "#E8E3D9", tagFg: "#5F564C", dark: false },
+      Green:  { name: "绿色·正常", weight: 27.5, bg: "#EDF8EE", bd: "#54A26C", tagBg: "#D4EFDA", tagFg: "#28683E", dark: false },
+      Blue:   { name: "蓝色·稀有", weight: 13.5, bg: "#EAF4FD", bd: "#4886C6", tagBg: "#D1E5F8", tagFg: "#23558E", dark: false },
+      Purple: { name: "紫色·史诗", weight: 6.3,  bg: "#F5EDFD", bd: "#8F5CC6", tagBg: "#E4D3F7", tagFg: "#5C308E", dark: false },
+      Gold:   { name: "橙色·传说", weight: 3.0,  bg: "#FEF4DF", bd: "#DE8E22", tagBg: "#FBE2AE", tagFg: "#94540A", dark: false },
+      Red:    { name: "红色·神话", weight: 1.12, bg: "#FEEBEA", bd: "#D44242", tagBg: "#F9D0CE", tagFg: "#921E1E", dark: false },
+      Pink:   { name: "粉色·限定", weight: 0.06, bg: "#FEECF6", bd: "#E25E9E", tagBg: "#FAD2E7", tagFg: "#9C2462", dark: false },
+      Black:  { name: "黑色·遗留", weight: 0.02, bg: "#25222A", bd: "#D8B15E", tagBg: "#3E362C", tagFg: "#F7DB92", dark: true }
+    };
+    const RARITY_ORDER = ["White", "Green", "Blue", "Purple", "Gold", "Red", "Pink", "Black"];
+
+    const ROLE_SETS = {
+      laobing_1:   { name: "传奇NPC · 老冰套 1.0", items: ["r_11", "k_07", "w_07", "g_06", "b_10"] },
+      laobing_2:   { name: "传奇NPC · 老冰套 2.0", items: ["o_02", "p_05", "w_01", "w_10", "k_01"] },
+      hao_set:     { name: "传奇NPC · 阿皓套",     items: ["k_02", "g_01", "o_06", "p_12", "p_16"] },
+      chen_set:    { name: "传奇NPC · 阿宸套",     items: ["p_06", "o_12", "o_11", "o_10", "b_11", "p_17"] },
+      cabbage_set: { name: "秘境奇珍 · 卷心菜套装", items: ["d_07", "o_14", "k_08", "r_12", "g_11", "b_19", "p_19", "w_18"] },
+      gold_set:    { name: "殿堂秘宝 · 黄金套",     items: ["o_18", "o_19", "o_20", "o_21", "o_22"] }
+    };
+
+    const CATALOG = [{"id":"w_01","name":"蓝海点8","r":"White","p":2,"sub":"经典白蓝盒","flav":"据说刚好够渡鸦工坊的老冰撑过一次深夜调试。","tag":"日常","c":0,"row":0},{"id":"w_02","name":"破损鼠标","r":"White","p":5,"sub":"左键偶发双击","flav":"滚轮发出悲鸣，但依然能勉强点完弹窗。","tag":"数码","c":1,"row":0},{"id":"w_03","name":"华维M99概念机","r":"White","p":9,"sub":"时空穿越机型","flav":"背面排满夸张摄像头，但贴膜已经翘边。","tag":"数码","c":2,"row":0},{"id":"w_04","name":"永乐大典残页","r":"White","p":8,"sub":"边角泛黄","flav":"上面写着一行神秘古训，似乎与排版有关。","tag":"学术","c":3,"row":0},{"id":"w_05","name":"一沓A4纸","r":"White","p":3,"sub":"草稿与报错","flav":"一半是公式推导，一半是无聊画的小涂鸦。","tag":"办公","c":4,"row":0},{"id":"w_06","name":"颈椎靠垫","r":"White","p":6,"sub":"工位续命件","flav":"被压得微微扁平，却守护过无数个清晨。","tag":"日常","c":5,"row":0},{"id":"w_07","name":"半瓶老冰喝剩的山泉水","r":"White","p":3,"sub":"有点甜？","flav":"没人敢确定它是今天还是上周开封的。","tag":"饮食","c":6,"row":0},{"id":"w_08","name":"纸杯","r":"White","p":5,"sub":"微温","flav":"杯壁留着淡淡茶渍，偶尔也会用来装螺丝。","tag":"饮食","c":7,"row":0},{"id":"w_09","name":"面包包装袋","r":"White","p":6,"sub":"残留面包屑","flav":"上面还残留着早八赶路时的焦糖香气。","tag":"饮食","c":8,"row":0},{"id":"w_10","name":"老冰的课程表","r":"White","p":9,"sub":"划满红叉","flav":"满课的日子里，连铅笔字迹都透着绝望。","tag":"学术","c":9,"row":0},{"id":"w_11","name":"手机支架","r":"White","p":10,"sub":"摸鱼搭档","flav":"角度刚好可以一边跑仿真一边瞄一眼消息。","tag":"数码","c":10,"row":0},{"id":"w_12","name":"一块抹布","r":"White","p":3,"sub":"微潮略旧","flav":"擦过实验台、擦过水渍，默默承受了太多。","tag":"日常","c":11,"row":0},{"id":"w_13","name":"谁的眼镜盒","r":"White","p":5,"sub":"失物招领","flav":"孤零零躺在角落里，里面还留着一块擦镜布。","tag":"日常","c":12,"row":0},{"id":"w_14","name":"掉落的天花板","r":"White","p":5,"sub":"惊魂一刻","flav":"不知哪天突然从头顶飘落的一块石膏板，所幸没砸到头。","tag":"日常","c":0,"row":1},{"id":"w_15","name":"口香糖糖纸","r":"White","p":1,"sub":"锡纸折痕","flav":"带着一丝残存薄荷清香，折成小方块非常解压。","tag":"饮食","c":1,"row":1},{"id":"w_16","name":"黑色记号笔","r":"White","p":3,"sub":"油性粗头","flav":"写完标签一定要记得盖笔帽，不然明天就干了。","tag":"办公","c":2,"row":1},{"id":"w_17","name":"壁纸刀","r":"White","p":5,"sub":"咔咔推进","flav":"拆快递和裁图纸的一把好手，推出来清脆带感。","tag":"工具","c":3,"row":1},{"id":"w_18","name":"卷心菜","r":"White","p":3,"sub":"朴实菜叶","flav":"一颗普普通通的圆滚滚白心卷心菜，似乎隐藏着某种传奇血脉。","tag":"卷心菜","c":4,"row":1},{"id":"w_19","name":"铁牛多孔插线板","r":"White","p":5,"sub":"多孔续航","flav":"工位电力生命线，插满了手机电脑和各种神秘小电器。","tag":"数码","c":5,"row":1},{"id":"w_20","name":"坚不可摧的月饼","r":"White","p":6,"sub":"物理神兵","flav":"放了不知多久依然硬如花岗岩，咬下去先担心牙保不保得住。","tag":"饮食","c":6,"row":1},{"id":"w_21","name":"花生馅汤圆","r":"White","p":8,"sub":"香甜流心","flav":"咬破软糯外皮的瞬间，滚烫香浓的花生芝麻馅扑面而来。","tag":"饮食","c":7,"row":1},{"id":"w_22","name":"赛百鲜全麦套餐","r":"White","p":8,"sub":"全麦加生菜","flav":"挑选配菜和酱料的过程堪比一次小型期末答辩。","tag":"饮食","c":8,"row":1},{"id":"w_23","name":"贵州蘸水菜","r":"White","p":12,"sub":"灵魂糊辣椒","flav":"平平无奇的清煮蔬菜，蘸上秘制糊辣椒水瞬间封神！","tag":"饮食","c":9,"row":1},{"id":"g_01","name":"野生金百合","r":"Green","p":11,"sub":"暖金礼盒","flav":"不知从渡鸦秘境哪个抽屉角落翻出的暖黄复古小盒。","tag":"日常","c":10,"row":1},{"id":"g_02","name":"一截木棍","r":"Green","p":11,"sub":"手感极佳","flav":"每个旅人在路边看到都会忍不住捡起来挥两下。","tag":"工具","c":11,"row":1},{"id":"g_03","name":"海盐苏打饼干","r":"Green","p":12,"sub":"嘎嘣脆","flav":"微咸清脆，深夜敲键盘时的忠实能量补给。","tag":"饮食","c":12,"row":1},{"id":"g_04","name":"网吧大水","r":"Green","p":15,"sub":"冰爽巨瓶","flav":"喝一口仿佛耳边响起机械键盘的清脆声。","tag":"饮食","c":0,"row":2},{"id":"g_05","name":"高粱饴","r":"Green","p":13,"sub":"软糯粘牙","flav":"撕开玻璃糖纸的瞬间，童年记忆涌上心头。","tag":"饮食","c":1,"row":2},{"id":"g_06","name":"牛舌饼","r":"Green","p":15,"sub":"掉渣预警","flav":"酥皮层次分明，请务必远离键盘缝隙食用。","tag":"饮食","c":2,"row":2},{"id":"g_07","name":"电脑机箱","r":"Green","p":20,"sub":"微积灰尘","flav":"侧板透出微弱风扇光，呼呼作响像在打呼噜。","tag":"硬件","c":3,"row":2},{"id":"g_08","name":"抽屉柜","r":"Green","p":25,"sub":"杂物黑洞","flav":"放进去的东西总会在不需要的时候重新出现。","tag":"日常","c":4,"row":2},{"id":"g_09","name":"网线","r":"Green","p":22,"sub":"水晶头完好","flav":"比 Wi-Fi 让人安心一百倍的物理羁绊。","tag":"硬件","c":5,"row":2},{"id":"g_10","name":"非洲之心","r":"Green","p":30,"sub":"闪耀小钻石","flav":"虽说是绿色品质，但摸出来那刻心跳确实漏了一拍。","tag":"珍宝","c":6,"row":2},{"id":"g_11","name":"新鲜的卷心菜","r":"Green","p":20,"sub":"挂满晨露","flav":"刚从清晨秘境菜地摘下的水灵灵翠绿卷心菜，清脆爽口。","tag":"卷心菜","c":7,"row":2},{"id":"b_01","name":"白果方头充电器","r":"Blue","p":50,"sub":"洁白方头","flav":"只要借出去过，就再也没完整回到过原位。","tag":"数码","c":8,"row":2},{"id":"b_02","name":"致盲眼罩","r":"Blue","p":88,"sub":"物理遮光","flav":"戴上它，午休十分钟堪比深度睡眠两小时。","tag":"日常","c":9,"row":2},{"id":"b_03","name":"加热水杯","r":"Blue","p":99,"sub":"恒温55度","flav":"让每一口热水都恰到好处，冬日实验室神器。","tag":"饮食","c":10,"row":2},{"id":"b_04","name":"褪黑素","r":"Blue","p":120,"sub":"早睡幻想","flav":"吃下两颗然后继续刷手机到凌晨两点。","tag":"日常","c":11,"row":2},{"id":"b_05","name":"神秘的椅子","r":"Blue","p":125,"sub":"气杆嘎吱响","flav":"坐上去会自动滑向电脑桌的不可思议人体工学椅。","tag":"办公","c":12,"row":2},{"id":"b_06","name":"试管装某种奇怪的液体","r":"Blue","p":130,"sub":"微微发光","flav":"摇一摇会冒出蓝绿色气泡，千万别当饮料喝。","tag":"学术","c":0,"row":3},{"id":"b_07","name":"解渴啦清爽饮","r":"Blue","p":5,"sub":"清爽补水","flav":"拧开瓶盖吨吨两口，感觉干涸的灵魂瞬间复活。","tag":"饮食","c":1,"row":3},{"id":"b_08","name":"小小公仔","r":"Blue","p":10,"sub":"桌面守护神","flav":"圆滚滚地蹲在显示器下，每天陪你一起盯屏幕。","tag":"珍宝","c":2,"row":3},{"id":"b_09","name":"毛绒手套","r":"Blue","p":60,"sub":"暖呼呼","flav":"绒毛厚实柔软，冬天骑车再也不怕冻僵手指。","tag":"服饰","c":3,"row":3},{"id":"b_10","name":"有点生锈的扳手","r":"Blue","p":88,"sub":"历经沧桑","flav":"斑驳锈迹见证过老冰无数次装拆，依然趁手有力。","tag":"工具","c":4,"row":3},{"id":"b_11","name":"阿宸的手冲咖啡壶","r":"Blue","p":90,"sub":"手冲香气","flav":"细长壶身微温，总能帮睡眼惺忪的阿宸冲出提神醒脑的浓郁香气。","tag":"饮食","c":5,"row":3},{"id":"b_12","name":"北峰羽绒服（太阳徽章）","r":"Blue","p":100,"sub":"暖阳充绒","flav":"胸前印着耀眼太阳徽章，穿上秒变冬日潮流担当。","tag":"服饰","c":6,"row":3},{"id":"b_13","name":"敬业的打印机","r":"Blue","p":120,"sub":"永不卡纸？","flav":"哪怕凌晨三点赶论文，它依然咔嚓咔嚓咬牙坚持。","tag":"办公","c":7,"row":3},{"id":"b_14","name":"哀嚎的键盘","r":"Blue","p":120,"sub":"键帽打油","flav":"空格键已微微松动，记录着成千上万行代码的悲欢。","tag":"数码","c":8,"row":3},{"id":"b_15","name":"黑巧星芒冰沙","r":"Blue","p":38,"sub":"浓郁冰沙","flav":"顶着奶油和可可碎，一口下去焦虑瞬间清零。","tag":"饮食","c":9,"row":3},{"id":"b_16","name":"老冰的工装裤","r":"Blue","p":33,"sub":"口袋超多","flav":"两侧大口袋里永远能掏出扳手、零食或神秘纸条。","tag":"服饰","c":10,"row":3},{"id":"b_17","name":"阿宸的茂密假发套","r":"Blue","p":30,"sub":"茂密飘逸","flav":"戴上瞬间发量暴涨三倍，再也不怕熬夜掉发焦虑。","tag":"服饰","c":11,"row":3},{"id":"b_18","name":"巨型树桩","r":"Blue","p":30,"sub":"年轮满满","flav":"像从森林秘境小岛搬来的巨型木桩，坐着发呆极度舒适。","tag":"日常","c":12,"row":3},{"id":"b_19","name":"蓝色卷心菜","r":"Blue","p":33,"sub":"冰蓝变异","flav":"散发着幽幽海风气息的罕见蓝色卷心菜，口感竟带一丝清甜。","tag":"卷心菜","c":0,"row":4},{"id":"p_01","name":"扭矩扳手","r":"Purple","p":288,"sub":"咔哒一声","flav":"达到设定力矩时的清脆声响，治好了所有强迫症。","tag":"工具","c":1,"row":4},{"id":"p_02","name":"游标卡尺","r":"Purple","p":388,"sub":"精确到0.02","flav":"量什么都要咔咔夹一下的精密机械浪漫。","tag":"工具","c":2,"row":4},{"id":"p_03","name":"超频大缓存9950芯片","r":"Purple","p":388,"sub":"大缓存神U","flav":"多核全开时仿佛听见仿真进度条在欢呼。","tag":"硬件","c":3,"row":4},{"id":"p_04","name":"高频双通32G内存条","r":"Purple","p":399,"sub":"高频马甲条","flav":"终于可以同时开一百个浏览器标签页不卡顿。","tag":"硬件","c":4,"row":4},{"id":"p_05","name":"防火外衣","r":"Purple","p":399,"sub":"安全感拉满","flav":"老冰的招牌战袍，厚实耐高温，披上后气场直接提升两个档次。","tag":"服饰","c":5,"row":4},{"id":"p_06","name":"违禁的暖水壶","r":"Purple","p":399,"sub":"宿舍禁物","flav":"藏在柜子最深处的神秘大功率温暖来源。","tag":"日常","c":6,"row":4},{"id":"p_07","name":"彩云金纹盒","r":"Purple","p":488,"sub":"绛红祥云盒","flav":"暗红复古盒缀着金色云纹，老江湖才懂的收藏含金量。","tag":"日常","c":7,"row":4},{"id":"p_08","name":"飞檐古楼盒","r":"Purple","p":499,"sub":"雅韵古楼盒","flav":"蓝紫金纹绘着飞檐斗拱，落霞与孤鹜齐飞。","tag":"日常","c":8,"row":4},{"id":"p_09","name":"海洋之泪","r":"Purple","p":388,"sub":"蔚蓝晶钻","flav":"深海凝结般的水滴宝石，光是拿在手里就觉得欧气附体。","tag":"珍宝","c":9,"row":4},{"id":"p_10","name":"奇怪的收纳箱","r":"Purple","p":288,"sub":"咔嗒锁扣","flav":"晃一晃能听见里面叮当作响，仿佛装了半个异次元。","tag":"日常","c":10,"row":4},{"id":"p_11","name":"日历本","r":"Purple","p":199,"sub":"倒计时记号","flav":"翻过的每一页都写满琐碎日常，撕下一页格外治愈。","tag":"办公","c":11,"row":4},{"id":"p_12","name":"阿皓的舞会假面","r":"Purple","p":288,"sub":"神秘优雅","flav":"金红镶边缀着羽毛，阿皓戴上它瞬间变成全场派对焦点。","tag":"服饰","c":12,"row":4},{"id":"p_13","name":"风衣客的拉风大衣","r":"Purple","p":300,"sub":"拉风战袍","flav":"衣摆随风扬起的那一刻，走路自带慢动作滤镜。","tag":"服饰","c":0,"row":5},{"id":"p_14","name":"情圣秘传笔记","r":"Purple","p":300,"sub":"绝密心得","flav":"翻开密密麻麻全是高情商话术，据说看过的人都脱单了。","tag":"学术","c":1,"row":5},{"id":"p_15","name":"伯格健身大力丸","r":"Purple","p":350,"sub":"氮泵拉满","flav":"一勺下肚浑身充满力量，感觉能单手卧推实验台。","tag":"伯格","c":2,"row":5},{"id":"p_16","name":"看不清名字的辞职申请","r":"Purple","p":250,"sub":"潇洒留白","flav":"签名处被墨迹晕开，却透着一股随时奔向自由的洒脱。","tag":"办公","c":3,"row":5},{"id":"p_17","name":"半袋奇妙的咖啡豆","r":"Purple","p":300,"sub":"果香烘焙","flav":"打开袋口瞬间满室生香，是阿宸最珍视的续命口粮。","tag":"饮食","c":4,"row":5},{"id":"p_18","name":"伯格的黑色水杯","r":"Purple","p":320,"sub":"硬核哑光","flav":"大容量纯黑保温杯，练完铁来一大口冰水爽透天灵盖。","tag":"伯格","c":5,"row":5},{"id":"p_19","name":"紫甘蓝","r":"Purple","p":88,"sub":"高贵紫叶","flav":"卷心菜家族中的史诗贵族，花青素浓度直接爆表！","tag":"卷心菜","c":6,"row":5},{"id":"p_20","name":"酒心巧克力","r":"Purple","p":99,"sub":"微醺甜香","flav":"咬开醇厚黑巧外壳，温润酒香缓缓化开，吃完精神百倍。","tag":"饮食","c":7,"row":5},{"id":"p_21","name":"伯格的耳塞","r":"Purple","p":100,"sub":"隔音神器","flav":"塞进耳朵瞬间世界安静，哪怕旁边电钻施工也能安然入睡。","tag":"伯格","c":8,"row":5},{"id":"o_01","name":"核弹级4090显卡","r":"Gold","p":588,"sub":"核弹级砖头","flav":"沉得像一块实心金砖，散热鳍片闪着传说微光。","tag":"硬件","c":9,"row":5},{"id":"o_02","name":"老冰的握力环","r":"Gold","p":599,"sub":"麒麟臂养成","flav":"据说捏满一万次可以单手拧开任何生锈阀门。","tag":"工具","c":10,"row":5},{"id":"o_03","name":"大棉裤","r":"Gold","p":699,"sub":"绝对防御","flav":"穿上以后寒风退避三舍，风度什么的不重要。","tag":"服饰","c":11,"row":5},{"id":"o_04","name":"热气腾腾的健步鞋","r":"Gold","p":788,"sub":"软弹护足","flav":"走路自带回弹音效，日行两万步毫不费力。","tag":"服饰","c":12,"row":5},{"id":"o_05","name":"纯黑拖把","r":"Gold","p":888,"sub":"暗影洁具","flav":"黑得深邃纯粹，一挥之间实验室尘埃尽散。","tag":"工具","c":0,"row":6},{"id":"o_06","name":"阿皓的神秘聊天记录","r":"Gold","p":899,"sub":"绝密吃瓜","flav":"里面藏着阿皓手机里足以震动整个渡鸦广场的浪漫名场面。","tag":"数码","c":1,"row":6},{"id":"o_07","name":"尼克复古相机","r":"Gold","p":888,"sub":"清脆快门","flav":"咔嚓一声定格绝美光影，黑金镜头沉甸甸满是质感。","tag":"数码","c":2,"row":6},{"id":"o_08","name":"大米紫釉概念机","r":"Gold","p":788,"sub":"温润紫釉","flav":"高颜值淡紫机身配丝滑手感，性价比直接封神。","tag":"数码","c":3,"row":6},{"id":"o_09","name":"可能是雷神的锤子","r":"Gold","p":888,"sub":"噼啪静电","flav":"提起来出奇地沉，偶尔还会窜出几缕金色小电弧。","tag":"珍宝","c":4,"row":6},{"id":"o_10","name":"阿宸的战术拾音盔","r":"Gold","p":799,"sub":"战术拾音","flav":"精密声学护耳，连走廊尽头的脚步声都听得一清二楚。","tag":"服饰","c":5,"row":6},{"id":"o_11","name":"老旧的荣誉证书（蓝色）","r":"Gold","p":888,"sub":"庄重蓝封","flav":"蓝色封皮略带岁月折痕，字字赤诚分量千钧。","tag":"学术","c":6,"row":6},{"id":"o_12","name":"尘封的护照","r":"Gold","p":999,"sub":"远行印记","flav":"内页盖满神秘印章，仿佛随时准备开启下一段精彩旅程。","tag":"珍宝","c":7,"row":6},{"id":"o_13","name":"无敌美味大酱缸","r":"Gold","p":888,"sub":"秘制老卤","flav":"掀开盖子十里飘香，拌饭蘸菜简直无敌的传说级大酱缸！","tag":"饮食","c":8,"row":6},{"id":"o_14","name":"金色卷心菜","r":"Gold","p":999,"sub":"耀眼金叶","flav":"通体泛着温暖金光的传说级卷心菜，每片叶子都像纯金雕琢。","tag":"卷心菜","c":9,"row":6},{"id":"o_15","name":"大力王的双手剑","r":"Gold","p":1000,"sub":"力拔山河","flav":"沉重无比的黄金纹双手大剑，据说只有卧推破百者才能挥动。","tag":"珍宝","c":10,"row":6},{"id":"o_16","name":"阿皓的粉色运动短裤","r":"Gold","p":888,"sub":"骚气冲刺","flav":"阿皓最爱的樱粉配色，自带回头率拉满光环，跑起步来健步如飞。","tag":"服饰","c":11,"row":6},{"id":"o_17","name":"旅人的沉眠枕头","r":"Gold","p":899,"sub":"秒睡结界","flav":"一沾枕头三秒进入深度睡眠，堪称失眠患者的终极救星。","tag":"日常","c":12,"row":6},{"id":"o_18","name":"黄金手杖","r":"Gold","p":1000,"sub":"权贵权杖","flav":"纯金雕花手杖顶端镶嵌宝石，握在手中气场瞬间登顶。","tag":"黄金","c":0,"row":7},{"id":"o_19","name":"黄金面具","r":"Gold","p":1222,"sub":"法老遗辉","flav":"以足金锻造的神秘华丽面具，在灯下折射出耀眼金芒。","tag":"黄金","c":1,"row":7},{"id":"o_20","name":"金杯","r":"Gold","p":1333,"sub":"荣耀圣杯","flav":"沉甸甸的纯金高脚奖杯，仿佛装满了源源不断的幸运。","tag":"黄金","c":2,"row":7},{"id":"o_21","name":"黄金手镯","r":"Gold","p":1455,"sub":"富贵绕腕","flav":"精工錾刻纹饰的实心足金手镯，叮当作响尽显奢华。","tag":"黄金","c":3,"row":7},{"id":"o_22","name":"纯金吊坠","r":"Gold","p":1555,"sub":"璀璨金饰","flav":"温润厚重的纯金徽章吊坠，自带招财进宝的金色光环。","tag":"黄金","c":4,"row":7},{"id":"r_01","name":"九通阀大管子","r":"Red","p":2000,"sub":"管路奇迹","flav":"九个方向的阀门交错相连，看一眼就头皮发麻的工业美学。","tag":"工具","c":5,"row":7},{"id":"r_02","name":"无人机","r":"Red","p":1800,"sub":"四轴嗡鸣","flav":"起飞瞬间全场的目光都会被这架空中精灵吸引。","tag":"数码","c":6,"row":7},{"id":"r_03","name":"海风原浆啤酒","r":"Red","p":1300,"sub":"冰镇绿瓶","flav":"塑料袋打一兜冰镇海风原浆，神仙来了也得干一杯。","tag":"饮食","c":7,"row":7},{"id":"r_04","name":"仿真宝典","r":"Red","p":3050,"sub":"网格必收敛","flav":"翻开第一页写着：残差直线下降，绝不发散。","tag":"学术","c":8,"row":7},{"id":"r_05","name":"代码神谕卷轴","r":"Red","p":4000,"sub":"代码神谕","flav":"轻轻敲下回车，尘封多年的疑难杂症迎刃而解。","tag":"学术","c":9,"row":7},{"id":"r_06","name":"顶刊神作残卷","r":"Red","p":5000,"sub":"顶级期刊碎片","flav":"即便只是残页，也散发着令学术界颤抖的红光。","tag":"学术","c":10,"row":7},{"id":"r_07","name":"报销秘籍","r":"Red","p":3000,"sub":"一次过审","flav":"发票贴得比尺子还齐，签字流程一路绿灯。","tag":"办公","c":11,"row":7},{"id":"r_08","name":"挖掘机模型","r":"Red","p":4999,"sub":"机械浪漫","flav":"合金履带配可动液压铲斗，一摆上桌就让人移不开眼。","tag":"珍宝","c":12,"row":7},{"id":"r_09","name":"50W天选录用函","r":"Red","p":5000,"sub":"薪资起飞","flav":"烫金红函闪耀着财务自由的光芒，让人嘴角疯狂上扬。","tag":"办公","c":0,"row":8},{"id":"r_10","name":"超大容量固态硬盘","r":"Red","p":4000,"sub":"读写狂飙","flav":"再也不用纠结删数据还是删游戏，统统塞进去！","tag":"硬件","c":1,"row":8},{"id":"r_11","name":"老冰的笔记本","r":"Red","p":3500,"sub":"满血工作站","flav":"风扇起飞时宛如喷气机，藏着无数珍贵模型与代码。","tag":"数码","c":2,"row":8},{"id":"r_12","name":"愤怒的卷心菜","r":"Red","p":1888,"sub":"怒气红温","flav":"气鼓鼓涨得通红的神话级暴躁卷心菜，连菜叶都在冒热气！","tag":"卷心菜","c":3,"row":8},{"id":"k_01","name":"奇迹冰左手","r":"Pink","p":8888,"sub":"限定神迹","flav":"闪耀着霜雪与樱粉辉光的传奇左手，欧气爆棚！","tag":"珍宝","c":4,"row":8},{"id":"k_02","name":"粉芒腾龙战术枪","r":"Pink","p":4888,"sub":"粉芒涂装","flav":"流线型战术造型配限定粉光，阿皓收藏柜里的镇宅潮玩。","tag":"珍宝","c":5,"row":8},{"id":"k_03","name":"伯格的紧身衣","r":"Pink","p":6666,"sub":"贴身战袍","flav":"弹性惊人、气场全开，穿上仿佛自带BGM。","tag":"伯格","c":6,"row":8},{"id":"k_04","name":"极速充电宝","r":"Pink","p":5888,"sub":"光速回血","flav":"插上三秒电量起飞，彻底终结电量焦虑。","tag":"数码","c":7,"row":8},{"id":"k_05","name":"8178钥匙","r":"Pink","p":5999,"sub":"神秘门禁","flav":"钥匙柄刻着8178，据说能打开渡鸦世界最温暖的秘密基地。","tag":"珍宝","c":8,"row":8},{"id":"k_06","name":"匪徒帽","r":"Pink","p":5888,"sub":"限定潮酷","flav":"樱粉针织蒙面头套，防风保暖还莫名透着一丝反差萌。","tag":"服饰","c":9,"row":8},{"id":"k_07","name":"老冰白色耳机","r":"Pink","p":6888,"sub":"降噪结界","flav":"戴上瞬间隔绝尘世喧嚣，只剩下治愈轻音乐与好心情。","tag":"数码","c":10,"row":8},{"id":"k_08","name":"水晶卷心菜","r":"Pink","p":4888,"sub":"粉晶剔透","flav":"仿佛用整块樱粉水晶雕琢而成的限定卷心菜，折射出梦幻光晕。","tag":"卷心菜","c":11,"row":8},{"id":"k_09","name":"老冰手办","r":"Pink","p":5888,"sub":"限量典藏","flav":"1:7 精细涂装的传奇NPC绝版手办，底座刻着专属神秘编号！","tag":"珍宝","c":12,"row":8},{"id":"k_10","name":"渡鸦浮雕","r":"Pink","p":8888,"sub":"镇馆浮雕","flav":"樱粉辉光与曜石雕琢而成的幸运渡鸦浮雕，凝结着一切幸运的起点。","tag":"珍宝","c":0,"row":9},{"id":"d_01","name":"最终房间之钥","r":"Black","p":9999,"sub":"终极遗留","flav":"漆黑曜石铸就、金丝缠绕，渡鸦衔来的最后一道谜题。","tag":"遗物","c":1,"row":9},{"id":"d_02","name":"你的毕业证书","r":"Black","p":10000,"sub":"圆满通关","flav":"历尽千帆终得此卷，从此山高水长，前程似锦！","tag":"遗物","c":2,"row":9},{"id":"d_03","name":"克苏鲁之靴","r":"Black","p":9999,"sub":"深渊遗物","flav":"漆黑战靴缠绕着鎏金与幽光触须，踏步间仿佛有低语回响。","tag":"遗物","c":3,"row":9},{"id":"d_04","name":"无限网吧充值卡","r":"Black","p":19999,"sub":"永不下机","flav":"黑金磁条泛着永恒微光，刷卡瞬间全场机位为你点亮！","tag":"遗物","c":4,"row":9},{"id":"d_05","name":"无限经费报销单","r":"Black","p":19999,"sub":"财务自由","flav":"预算上限写着无穷大符号，签字栏已自动盖满绿色通过章！","tag":"遗物","c":5,"row":9},{"id":"d_06","name":"未署名的论文成稿","r":"Black","p":19999,"sub":"顶刊预定","flav":"逻辑无懈可击、实验数据完美无瑕，只差填上你的大名！","tag":"遗物","c":6,"row":9},{"id":"d_07","name":"卷心菜之王","r":"Black","p":15000,"sub":"菜界至尊","flav":"头戴鎏金王冠的漆黑曜石卷心菜至尊，统御世间一切卷心菜！","tag":"卷心菜","c":7,"row":9}];
+    const ITEM_MAP = {};
+    const BY_RARITY = {};
+    RARITY_ORDER.forEach(r => BY_RARITY[r] = []);
+    CATALOG.forEach(it => {
+      ITEM_MAP[it.id] = it;
+      if (BY_RARITY[it.r]) BY_RARITY[it.r].push(it);
+    });
+
+    function getSetNamesForItem(id) {
+      const names = [];
+      for (const k in ROLE_SETS) {
+        if (ROLE_SETS[k].items.includes(id)) names.push(ROLE_SETS[k].name);
+      }
+      return names.join(" / ");
+    }
+
+    function spritePos(it) {
+      return `-${it.c * 64}px -${it.row * 64}px`;
+    }
+
+    // 渲染 NPC 与特殊套装里的迷你像素物品标签
+    document.querySelectorAll(".mini-items[data-set]").forEach(el => {
+      const set = ROLE_SETS[el.dataset.set];
+      if (!set) return;
+      el.innerHTML = set.items.map(id => {
+        const it = ITEM_MAP[id];
+        if (!it) return "";
+        const rm = RARITIES[it.r];
+        return `<span class="mini-chip" style="border-color:${rm.bd};background:${rm.dark ? '#2E2A35' : '#fff'};color:${rm.dark ? rm.tagFg : '#3B2D23'}">
+          <span class="mini-spr"><span class="sprite-icon" style="background-position:${spritePos(it)}"></span></span>
+          <span>${it.name}</span>
+        </span>`;
+      }).join("");
+    });
+
+    // 网页试拆渡鸦礼盒演示逻辑
+    let demoCount = 0;
+    let lbBoost = false;
+    const giftBtn = document.getElementById("giftBtn");
+    const revealBox = document.getElementById("revealBox");
+    const againBtn = document.getElementById("againBtn");
+    const lbToggle = document.getElementById("lbBoostToggle");
+
+    lbToggle.addEventListener("click", () => {
+      lbBoost = !lbBoost;
+      lbToggle.classList.toggle("active", lbBoost);
+      lbToggle.textContent = lbBoost ? "⚡ 老冰套2.0加持：开（品质UP）" : "⚡ 老冰套2.0加持：关";
+    });
+
+    function rollRarity() {
+      const mult = lbBoost
+        ? { White: 0.88, Green: 0.96, Blue: 1.15, Purple: 1.32, Gold: 1.45, Red: 1.55, Pink: 1.60, Black: 1.60 }
+        : { White: 1, Green: 1, Blue: 1, Purple: 1, Gold: 1, Red: 1, Pink: 1, Black: 1 };
+      let sum = 0;
+      RARITY_ORDER.forEach(r => sum += RARITIES[r].weight * mult[r]);
+      let roll = Math.random() * sum;
+      for (const r of RARITY_ORDER) {
+        roll -= RARITIES[r].weight * mult[r];
+        if (roll <= 0) return r;
+      }
+      return "White";
+    }
+
+    function openDemoBox() {
+      giftBtn.style.display = "flex";
+      revealBox.classList.remove("show");
+      giftBtn.classList.remove("shaking");
+      void giftBtn.offsetWidth;
+      giftBtn.classList.add("shaking");
+
+      setTimeout(() => {
+        const r = rollRarity();
+        const pool = BY_RARITY[r];
+        const item = pool[Math.floor(Math.random() * pool.length)];
+        const rm = RARITIES[item.r];
+        demoCount++;
+
+        giftBtn.style.display = "none";
+        const badge = document.getElementById("revBadge");
+        badge.textContent = rm.name;
+        badge.style.background = rm.tagBg;
+        badge.style.color = rm.tagFg;
+
+        const wrap = document.getElementById("revIconWrap");
+        wrap.style.background = rm.bg;
+        wrap.style.borderColor = rm.bd;
+
+        const sp = document.getElementById("revSprite");
+        sp.style.backgroundPosition = spritePos(item);
+
+        document.getElementById("revName").textContent = item.name;
+        document.getElementById("revSub").textContent = `「${item.sub}」 · 估值 ${item.p.toLocaleString()} 仿真币`;
+        document.getElementById("revFlav").textContent = item.flav;
+
+        const setNames = getSetNamesForItem(item.id);
+        const setTag = document.getElementById("revSetTag");
+        if (setNames) {
+          setTag.style.display = "inline-block";
+          setTag.textContent = `✦ 套装组件：${setNames}`;
+        } else {
+          setTag.style.display = "none";
+        }
+
+        revealBox.classList.add("show");
+        document.getElementById("demoCounter").textContent = `已试拆 ${demoCount} 个礼盒 · ${r === 'Gold' || r === 'Red' || r === 'Pink' || r === 'Black' ? '欧皇附体！！' : '下载游戏在后台自动掉盒～'}`;
+      }, 320);
+    }
+
+    giftBtn.addEventListener("click", openDemoBox);
+    againBtn.addEventListener("click", openDemoBox);
+
+    // 125 件全图鉴筛选与搜索
+    let currentFilter = "ALL";
+    let showAll = false;
+    const filterPills = document.getElementById("filterPills");
+    const codexGrid = document.getElementById("codexGrid");
+    const codexSearch = document.getElementById("codexSearch");
+    const toggleMoreBtn = document.getElementById("toggleMoreBtn");
+
+    function buildFilterPills() {
+      const items = [{ key: "ALL", label: `全部 (${CATALOG.length})` }];
+      RARITY_ORDER.forEach(r => {
+        items.push({ key: r, label: `${RARITIES[r].name} (${BY_RARITY[r].length})` });
+      });
+      filterPills.innerHTML = items.map(p =>
+        `<button class="pill-btn ${p.key === currentFilter ? 'active' : ''}" data-key="${p.key}" type="button">${p.label}</button>`
+      ).join("");
+      filterPills.querySelectorAll(".pill-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          currentFilter = btn.dataset.key;
+          showAll = true;
+          buildFilterPills();
+          renderCodex();
+        });
+      });
+    }
+
+    function renderCodex() {
+      const q = (codexSearch.value || "").trim().toLowerCase();
+      // 按稀有度从高到低默认展示更有视觉吸引力
+      const sorted = [...CATALOG].sort((a, b) => RARITY_ORDER.indexOf(b.r) - RARITY_ORDER.indexOf(a.r) || b.p - a.p);
+      const filtered = sorted.filter(it => {
+        if (currentFilter !== "ALL" && it.r !== currentFilter) return false;
+        if (q && !(it.name.toLowerCase().includes(q) || it.sub.toLowerCase().includes(q) || it.flav.toLowerCase().includes(q) || it.tag.toLowerCase().includes(q))) return false;
+        return true;
+      });
+
+      const limit = showAll || q ? filtered.length : 24;
+      const slice = filtered.slice(0, limit);
+      codexGrid.innerHTML = slice.map(it => {
+        const rm = RARITIES[it.r];
+        const fg = rm.dark ? "#F7E4A6" : "#3B2D23";
+        return `<div class="item-card" style="background:${rm.bg};border-color:${rm.bd};color:${fg}">
+          <div class="top-meta">
+            <span style="background:${rm.tagBg};color:${rm.tagFg};padding:1px 7px;border-radius:999px;">${rm.name}</span>
+            <span>${it.p.toLocaleString()} 币</span>
+          </div>
+          <span class="sprite-icon" style="background-position:${spritePos(it)}"></span>
+          <div class="it-name">${it.name}</div>
+          <div class="it-sub">「${it.sub}」</div>
+          <div class="it-flav">${it.flav}</div>
+        </div>`;
+      }).join("");
+
+      if (filtered.length > limit) {
+        toggleMoreBtn.style.display = "inline-flex";
+        toggleMoreBtn.textContent = `展开剩余 ${filtered.length - limit} 件藏品（共 ${filtered.length} 件）`;
+      } else if (showAll && currentFilter === "ALL" && !q) {
+        toggleMoreBtn.style.display = "inline-flex";
+        toggleMoreBtn.textContent = "收起部分图鉴";
+      } else {
+        toggleMoreBtn.style.display = "none";
+      }
+    }
+
+    toggleMoreBtn.addEventListener("click", () => {
+      showAll = !showAll;
+      renderCodex();
+    });
+    codexSearch.addEventListener("input", renderCodex);
+
+    buildFilterPills();
+    renderCodex();
+  </script>
+</body>
+</html>
