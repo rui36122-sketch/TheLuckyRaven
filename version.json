@@ -1,5 +1,5 @@
 {
-  "version": "2.5.0",
-  "notes": "1. 新增 26 件全新藏品（图鉴扩充至 119 件），含 8 色卷心菜家族、无限经费报销单、未署名的论文成稿等；2. 收藏室开放「卷心菜套装(3.5x)」：集齐后礼盒变为超可爱卷心菜外观、掉落提醒变为专属卷心菜彩蛋文案，并永久提高锻造强化成功率 5%！",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.5.0/TheLuckyRaven_Update.zip"
+  "version": "2.5.1",
+  "notes": "修复部分玩家检查更新命中 CDN 旧缓存导致看不到最新版的 Bug（全面切换为实时无缓存高速更新通道），并包含全部 119 件藏品与卷心菜套装！",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.5.1/TheLuckyRaven_Update.zip"
 }
