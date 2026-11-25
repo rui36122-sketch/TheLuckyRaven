@@ -1,5 +1,5 @@
 {
-  "version": "2.2.0",
-  "notes": "公平长线平衡更新：移除设置中可调掉落率与测试掉落入口，礼盒基础掉落率固定锁定为 1%，大幅优化 8 色礼盒品质分布与越级概率，防一晚毕业更耐玩！",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.2.0/TheLuckyRaven_Update.zip"
+  "version": "2.3.0",
+  "notes": "1. 移除外挂式掉落率调节与测试掉盒，礼盒掉落率固定锁定为 1%；2. 收紧 8 色礼盒品质与越级概率，长线游玩更耐玩；3. 锻造重大升级：物品强化至 +8 时直接品质飞升，随机变为高 1 级品质物品！",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.3.0/TheLuckyRaven_Update.zip"
 }
