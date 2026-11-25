@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
-  "notes": "内置 GitHub 一键自动更新，包含全部 93 件藏品、合成、老虎机、锻造、收藏室与四大角色专有套装。",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.1.0/TheLuckyRaven_Update.zip"
+  "version": "2.2.0",
+  "notes": "公平长线平衡更新：移除设置中可调掉落率与测试掉落入口，礼盒基础掉落率固定锁定为 1%，大幅优化 8 色礼盒品质分布与越级概率，防一晚毕业更耐玩！",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.2.0/TheLuckyRaven_Update.zip"
 }
