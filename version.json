@@ -1,5 +1,5 @@
 {
-  "version": "2.7.1",
-  "notes": "1. 安全防护升级：主程序正式接入代码混淆与字符串加密保护，防反编译与二次篡改（100% 兼容原有存档）；2. 新增正式《All Rights Reserved》版权声明与官方防倒卖防骗提示；3. 公开官网同步升级防整包扒图保护与传奇NPC原画署名水印。",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.7.1/TheLuckyRaven_Update.zip"
+  "version": "2.8.0",
+  "notes": "1. 冬季大更新福利：上线即领【3个红色神话礼盒 + 绝版冬季粉色限定「雪人手办」】！2. 新增 8 件藏品（总图鉴 133 件）并回归芸烟/疼王阁/C0DEX/NATRUE残卷；3. 传奇NPC「伯格套(2.88x)」与「睿套(3.1x)」重磅登场，渡鸦解锁强壮尖头与黑色毛绒外衣新形态、双倍掉盒、双倍开箱与炫酷音效，听说同来自寒冷之地的两人还有隐藏共鸣彩蛋等你探索！",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.0/TheLuckyRaven_Update.zip"
 }
