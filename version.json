@@ -1,5 +1,5 @@
 {
-  "version": "2.8.1",
-  "notes": "1. 重要修复：全面升级双引擎交互监听（全异步防超时钩子 + GetLastInputInfo 杀软/管理员权限自动兜底），彻底解决部分电脑因 360/火绒/管理员游戏拦截导致无法记录鼠标与键盘交互次数的问题！2. 设置界面新增监听引擎运行状态显示，一眼确认计数正常。3. 完整保留 v2.8.0 冬季大礼（3红盒 + 雪人手办）与全部存档！",
-  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.1/TheLuckyRaven_Update.zip"
+  "version": "2.9.0",
+  "notes": "1. 全新「报销单」锻造材料系统：在仓库分解物品可获得报销单（品质越高越多），锻造强化消耗报销单；同时优化强化物品售卖折旧机制，彻底杜绝锻造无限刷仿真币，保留收藏室高额仿真战力与 +8 升阶体验！2. 收藏室升级：自由展柜(36格)与套装展位(60格)分开独立计数；已放入收藏室或套装的藏品无需取出即可直接原地强化（带防误点确认弹窗）！3. 图鉴优化：取消卡片右上角数量角标，点进详情可查看累计出过几个。4. 三引擎防杀软交互计数再升级 + 设置页实时刷新计数 + 修复旧版跨存档商店排序报错！",
+  "download_url": "https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.9.0/TheLuckyRaven_Update.zip"
 }
