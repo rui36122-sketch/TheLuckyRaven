@@ -23,9 +23,10 @@
 
 ---
 
-### ❄️ v2.8.0 冬季大更新福利：上线即领【3 个红色神话礼盒 + 冬季绝版粉色限定「雪人手办」】！
+### 🎁 v2.10.0 手机版 (PWA) 上线福利：上线即领【2 个粉色限定礼盒 + 5 个金色传说礼盒】！
 
-👉 **[点击进入游戏官网（支持网页试拆礼盒 + 国内免梯子高速直下）](https://rui36122-sketch.github.io/TheLuckyRaven/)**
+👉 **[📱 打开《幸运渡鸦》手机网页版（iOS / 安卓免安装即玩 · 支持添加到桌面与电脑存档互通）](https://rui36122-sketch.github.io/TheLuckyRaven/mobile/)**  
+👉 **[🎮 进入游戏官网（支持网页试拆礼盒 + 国内免梯子高速直下）](https://rui36122-sketch.github.io/TheLuckyRaven/)**
 
 </div>
 
@@ -35,10 +36,11 @@
 
 | 下载版本 | 国内高速加速直链（免梯子推荐） | GitHub 官方源 | 适用人群 |
 | :--- | :--- | :--- | :--- |
-| **一键安装程序 (.exe)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.9.0/TheLuckyRaven_Setup.exe) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.9.0/TheLuckyRaven_Setup.exe) | 推荐新手，1 秒安装 + 桌面图标 + 自带一键卸载 |
-| **绿色便携版 (.zip)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.9.0/TheLuckyRaven_Update.zip) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.9.0/TheLuckyRaven_Update.zip) | 解压即玩，存档存于同级 `save\` 目录 |
+| **一键安装程序 (.exe)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.10.0/TheLuckyRaven_Setup.exe) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.10.0/TheLuckyRaven_Setup.exe) | 推荐新手，1 秒安装 + 桌面图标 + 自带一键卸载 |
+| **绿色便携版 (.zip)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.10.0/TheLuckyRaven_Update.zip) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.10.0/TheLuckyRaven_Update.zip) | 解压即玩，存档存于同级 `save\` 目录 |
+| **手机版 (iOS/安卓 PWA)** | [📱 浏览器直开即玩](https://rui36122-sketch.github.io/TheLuckyRaven/mobile/) | [官网入口](https://rui36122-sketch.github.io/TheLuckyRaven/) | 无需下载安装包，添加到主屏幕当 App 玩，与电脑无损互导存档！ |
 
-> 老版本玩家无需重新下载，直接在游戏内点击 **「设置 → 检查更新」** 即可一键无损升级至 `v2.9.0`（全新报销单分解锻造系统 + 收藏室与套装分开计数 & 原地强化 + 三引擎防杀软拦截计数）并保留全部存档！
+> 老版本电脑玩家无需重新下载，直接在游戏内点击 **「设置 → 检查更新」** 即可一键无损升级至 `v2.10.0`（支持公告栏、全平台存档互导，上线自动领取 **2 个粉色限定礼盒 + 5 个金色传说礼盒**）！
 
 ---
 
