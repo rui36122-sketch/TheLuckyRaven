@@ -35,10 +35,10 @@
 
 | 下载版本 | 国内高速加速直链（免梯子推荐） | GitHub 官方源 | 适用人群 |
 | :--- | :--- | :--- | :--- |
-| **一键安装程序 (.exe)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.0/TheLuckyRaven_Setup.exe) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.0/TheLuckyRaven_Setup.exe) | 推荐新手，1 秒安装 + 桌面图标 + 自带一键卸载 |
-| **绿色便携版 (.zip)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.0/TheLuckyRaven_Update.zip) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.0/TheLuckyRaven_Update.zip) | 解压即玩，存档存于同级 `save\` 目录 |
+| **一键安装程序 (.exe)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.1/TheLuckyRaven_Setup.exe) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.1/TheLuckyRaven_Setup.exe) | 推荐新手，1 秒安装 + 桌面图标 + 自带一键卸载 |
+| **绿色便携版 (.zip)** | [⚡ 点我高速下载](https://ghfast.top/https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.1/TheLuckyRaven_Update.zip) | [GitHub 直链](https://github.com/rui36122-sketch/TheLuckyRaven/releases/download/v2.8.1/TheLuckyRaven_Update.zip) | 解压即玩，存档存于同级 `save\` 目录 |
 
-> 老版本玩家无需重新下载，直接在游戏内点击 **「设置 → 检查更新」** 即可一键无损升级至 `v2.8.0` 并自动领取冬季福利！
+> 老版本玩家无需重新下载，直接在游戏内点击 **「设置 → 检查更新」** 即可一键无损升级至 `v2.8.1`（已内置双引擎防杀软拦截计数）并自动领取冬季福利！
 
 ---
 
