@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>幸运渡鸦 · 手机版 (PWA)</title>
+  <meta name="description" content="《幸运渡鸦》手机网页版(PWA)：渡鸦每5分钟离线巡逻、主动逗趣互动与苹果/安卓统一走路掉盒，133件原创像素藏品，支持与电脑版无损互导存档！" />
+  <meta name="theme-color" content="#F6F1E5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="幸运渡鸦" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+  <link rel="icon" type="image/png" href="./assets/icon-192.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="res-group">
+        <div class="res-pill" id="pillCoins">🪙 0</div>
+        <div class="res-pill slip" id="pillSlips">🧾 0单</div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="btnNotice">📜 公告</button>
+        <button class="icon-btn" id="btnSettings">⚙ 存档/设置</button>
+      </div>
+    </header>
+
+    <main class="main-scroll" id="mainView"></main>
+
+    <nav class="tabbar" id="tabBar">
+      <button class="tab-item active" data-tab="gifts"><span class="tab-ico">🎁</span><span>礼盒</span><span class="tab-badge hidden" id="badgeBoxes">0</span></button>
+      <button class="tab-item" data-tab="warehouse"><span class="tab-ico">🎒</span><span>仓库</span><span class="tab-badge hidden" id="badgeBag">0</span></button>
+      <button class="tab-item" data-tab="shop"><span class="tab-ico">🏪</span><span>商店/抽</span></button>
+      <button class="tab-item" data-tab="forge"><span class="tab-ico">🔨</span><span>锻造/合</span></button>
+      <button class="tab-item" data-tab="showcase"><span class="tab-ico">🏛</span><span>收藏/鉴</span></button>
+    </nav>
+  </div>
+
+  <div class="toast" id="toastBar"></div>
+  <div class="modal-backdrop hidden" id="modalRoot"></div>
+  <input type="file" id="hiddenFileInput" accept=".json,application/json,text/plain" class="hidden" />
+
+  <script src="./catalog.js"></script>
+  <script src="./engine.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

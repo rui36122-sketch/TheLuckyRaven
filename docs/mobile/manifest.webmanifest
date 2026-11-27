@@ -1,0 +1,25 @@
+{
+  "name": "幸运渡鸦 · The Lucky Raven",
+  "short_name": "幸运渡鸦",
+  "description": "超轻量休闲收集游戏手机版：渡鸦每5分钟离线巡逻、主动互动与走路计步掉礼盒，支持电脑与手机存档互通！",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F1E5",
+  "theme_color": "#F6F1E5",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
